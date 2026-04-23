@@ -1,0 +1,38 @@
+# OS artifacts
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+._*
+
+# Editor and IDE state
+.idea/
+*.swp
+*.swo
+*~
+
+# Local environment files
+.env
+.env.*
+
+# Logs and runtime files
+*.log
+*.pid
+*.seed
+*.stackdump
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary and build outputs
+.cache/
+dist/
+build/
+out/
+tmp/
+temp/
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.gz
