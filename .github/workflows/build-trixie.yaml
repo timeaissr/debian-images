@@ -1,0 +1,41 @@
+name: Build trixie
+
+on:
+  push:
+    branches: [ "main" ]
+    # 👇 魔法在这里：只有当你修改了 trixie-full 文件夹里的文件，或者修改了这个 yml 本身时，才会触发构建！
+    paths:
+      - 'trixie/**'
+      - '.github/workflows/build-trixie-full.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: trixie  # 定义当前镜像的名字
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./trixie
+          file: ./trixie/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
