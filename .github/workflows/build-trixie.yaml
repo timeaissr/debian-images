@@ -24,6 +24,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Normalize repository owner
+        shell: bash
+        run: echo "IMAGE_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -38,4 +42,4 @@ jobs:
           file: ./trixie/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ toLower(github.repository_owner) }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}:latest
