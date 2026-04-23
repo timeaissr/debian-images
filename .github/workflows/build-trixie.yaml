@@ -3,10 +3,10 @@ name: Build trixie
 on:
   push:
     branches: [ "main" ]
-    # 👇 魔法在这里：只有当你修改了 trixie-full 文件夹里的文件，或者修改了这个 yml 本身时，才会触发构建！
+    # 👇 只有当你修改了 trixie 文件夹里的文件，或者修改了这个 yml 本身时，才会触发构建！
     paths:
       - 'trixie/**'
-      - '.github/workflows/build-trixie-full.yml'
+      - '.github/workflows/build-trixie.yaml'
   workflow_dispatch:
 
 env:
