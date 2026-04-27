@@ -1,17 +1,16 @@
-name: Build trixie
+name: Build debian:trixie-slim
 
 on:
   push:
     branches: [ "main" ]
-    # 👇 只有当你修改了 trixie 文件夹里的文件，或者修改了这个 yml 本身时，才会触发构建！
     paths:
-      - 'trixie/**'
-      - '.github/workflows/build-trixie.yaml'
+      - 'debian-trixie-slim/**'
+      - '.github/workflows/debian-trixie-slim.yaml'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: trixie  # 定义当前镜像的名字
+  IMAGE_NAME: debian
 
 jobs:
   build-and-push:
@@ -35,11 +34,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=trixie-slim
+            type=sha,prefix=trixie-slim-
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
-          context: ./trixie
-          file: ./trixie/Dockerfile
+          context: ./debian-trixie-slim
+          file: ./debian-trixie-slim/Dockerfile
           push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

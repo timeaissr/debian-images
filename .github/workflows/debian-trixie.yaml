@@ -1,17 +1,16 @@
-name: Build trixie-slim
+name: Build debian:trixie
 
 on:
   push:
     branches: [ "main" ]
-    # 👇 监听路径改为 slim 文件夹
     paths:
-      - 'trixie-slim/**'
-      - '.github/workflows/build-trixie-slim.yaml'
+      - 'debian-trixie/**'
+      - '.github/workflows/debian-trixie.yaml'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: trixie-slim  # 改成 slim
+  IMAGE_NAME: debian            # 仓库名统一为 debian
 
 jobs:
   build-and-push:
@@ -35,11 +34,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=trixie               # 语义标签
+            type=sha,prefix=trixie-             # SHA 标签，例如 trixie-abc1234
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
-          context: ./trixie-slim
-          file: ./trixie-slim/Dockerfile
+          context: ./debian-trixie
+          file: ./debian-trixie/Dockerfile
           push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
