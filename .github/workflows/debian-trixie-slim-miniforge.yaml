@@ -42,6 +42,8 @@ jobs:
           tags: |
             type=raw,value=trixie-slim-mf
             type=sha,prefix=trixie-slim-mf-
+            type=raw,value=trixie-slim-miniforge
+            type=sha,prefix=trixie-slim-miniforge-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
