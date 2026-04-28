@@ -41,6 +41,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=trixie-slim
+            type=raw,value=13-slim
             type=sha,prefix=trixie-slim-
 
       - name: Build and push Docker image

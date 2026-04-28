@@ -41,6 +41,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=trixie-cuda12.8-cudnn-devel-uv-py312-torch
+            type=raw,value=13-cuda12.8-cudnn-devel-uv-py312-torch
             type=sha,prefix=trixie-cuda12.8-cudnn-devel-uv-py312-torch-
 
       - name: Build and push Docker image
