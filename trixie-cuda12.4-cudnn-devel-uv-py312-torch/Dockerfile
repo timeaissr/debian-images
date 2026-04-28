@@ -1,5 +1,5 @@
 # =============================================
-# 算力服务器实例镜像 - Debian 13 + CUDA 12.4
+# 算力服务器实例镜像 - Debian 13 + CUDA 12.4（Debian 官方源）
 # uv 完全管理 Python 3.12，虚拟环境固定在 /opt/venv
 # 适合临时训练实例（root 用户）
 # =============================================
@@ -16,9 +16,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=zh_CN.UTF-8 \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH="/opt/venv/bin:/usr/local/cuda-12.4/bin:/root/.cargo/bin:/usr/local/bin:${PATH}" \
-    LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:${LD_LIBRARY_PATH} \
-    CUDA_HOME=/usr/local/cuda-12.4 \
+    PATH="/opt/venv/bin:/usr/lib/cuda/bin:/root/.cargo/bin:/usr/local/bin:${PATH}" \
+    LD_LIBRARY_PATH=/usr/lib/cuda/lib64:${LD_LIBRARY_PATH} \
+    CUDA_HOME=/usr/lib/cuda \
     UV_PYTHON=3.12 \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
     UV_PYTHON_PREFERENCE=only-managed
@@ -43,15 +43,12 @@ RUN sed -i 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen && \
     echo ${TZ} > /etc/timezone && \
     dpkg-reconfigure -f noninteractive tzdata
 
-# ==================== 安装 CUDA 12.4 ====================
-RUN curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/debian13/x86_64/cuda-keyring_1.1-1_all.deb -o cuda-keyring.deb && \
-    dpkg -i cuda-keyring.deb && \
-    rm cuda-keyring.deb && \
-    apt-get update && \
+# ==================== 安装 CUDA 12.4（Debian 官方源）====================
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        cuda-toolkit-12-4 \
-        cuda-runtime-12-4 \
-        libcudnn9-cuda-12 \
+        nvidia-cuda-toolkit \
+        nvidia-cuda-dev \
+        libcudnn9 \
     && rm -rf /var/lib/apt/lists/* && \
     ldconfig
 
