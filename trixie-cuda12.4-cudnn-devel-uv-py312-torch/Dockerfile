@@ -44,11 +44,13 @@ RUN sed -i 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen && \
     dpkg-reconfigure -f noninteractive tzdata
 
 # ==================== 安装 CUDA 12.4（Debian 官方源）====================
-RUN apt-get update && \
+# trixie 里的 CUDA 相关包位于 non-free / contrib，cuDNN 对应 Debian 包名为 nvidia-cudnn
+RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         nvidia-cuda-toolkit \
         nvidia-cuda-dev \
-        libcudnn9 \
+        nvidia-cudnn \
     && rm -rf /var/lib/apt/lists/* && \
     ldconfig
 
