@@ -1,12 +1,12 @@
 # =============================================
 # 算力服务器实例镜像 - Debian 13 + CUDA 12.4（Debian 官方源）
-# uv 完全管理 Python 3.12，虚拟环境固定在 /opt/venv
+# uv 管理 Python 3.12，后续包由用户手动安装
 # 适合临时训练实例（root 用户）
 # =============================================
 
 FROM debian:13
 
-LABEL description="Debian 13 + CUDA 12.4 + uv + Python 3.12 + PyTorch"
+LABEL description="Debian 13 + CUDA 12.4 + uv + Python 3.12"
 
 # ==================== 环境变量 ====================
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -16,11 +16,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=zh_CN.UTF-8 \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH="/opt/venv/bin:/usr/lib/cuda/bin:/root/.cargo/bin:/usr/local/bin:${PATH}" \
+    PATH="/usr/lib/cuda/bin:/root/.cargo/bin:/usr/local/bin:${PATH}" \
     LD_LIBRARY_PATH=/usr/lib/cuda/lib64:${LD_LIBRARY_PATH} \
     CUDA_HOME=/usr/lib/cuda \
     UV_PYTHON=3.12 \
-    UV_PROJECT_ENVIRONMENT=/opt/venv \
     UV_PYTHON_PREFERENCE=only-managed
 
 # ==================== 系统依赖 + 时区 + 语言 ====================
@@ -57,22 +56,8 @@ RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmwa
 # ==================== 安装 uv ====================
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
-# ==================== 创建虚拟环境 ====================
-RUN mkdir -p /opt/venv && \
-    uv python install 3.12 && \
-    uv venv /opt/venv --python 3.12
-
-# ==================== uv 安装依赖 ====================
-# 使用 uv add 安装依赖（全部安装到 /opt/venv）
-RUN uv add \
-        torch torchvision torchaudio \
-        --index-url https://download.pytorch.org/whl/cu124 \
-    && uv add \
-        transformers accelerate datasets peft deepspeed bitsandbytes \
-        numpy pandas scipy scikit-learn matplotlib seaborn plotly \
-        jupyterlab jupyter notebook tensorboard ipykernel ipython \
-        requests tqdm pyyaml omegaconf hydra-core
-
+# ==================== 安装 Python 3.12 ====================
+RUN uv python install 3.12
 
 # ==================== 配置 SSH ====================
 RUN mkdir -p /var/run/sshd && \
@@ -88,9 +73,9 @@ echo "Debian 13 算力实例已启动"
 echo "时区: $(cat /etc/timezone)    语言: $LANG"
 echo "SSH 端口: 22"
 echo "JupyterLab: http://$(hostname -I | awk '{print $1}'):8888"
-echo "虚拟环境位置: /opt/venv"
+echo "Python 版本: uv python 3.12"
 echo "运行方式:   uv run python xxx.py"
-echo "添加包:     uv add <package_name>"
+echo "手动装包:   uv add <package_name>"
 echo "========================================"
 EOF
 
