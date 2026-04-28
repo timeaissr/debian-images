@@ -1,16 +1,16 @@
-name: Build debian:trixie-cuda12.8-cudnn-devel-uv-py312-torch
+name: Build debian:trixie-slim-mf
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'trixie-cuda12.8-cudnn-devel-uv-py312-torch/**'
-      - '.github/workflows/debian-trixie-cuda12.8-cudnn-devel-uv-py312-torch.yaml'
+      - 'trixie-slim-miniforge/**'
+      - '.github/workflows/trixie-slim-miniforge.yaml'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: debian            # 仓库名统一为 debian
+  IMAGE_NAME: debian
 
 jobs:
   build-and-push:
@@ -40,14 +40,16 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=trixie-cuda12.8-cudnn-devel-uv-py312-torch
-            type=sha,prefix=trixie-cuda12.8-cudnn-devel-uv-py312-torch-
+            type=raw,value=trixie-slim-mf
+            type=sha,prefix=trixie-slim-mf-
+            type=raw,value=trixie-slim-miniforge
+            type=sha,prefix=trixie-slim-miniforge-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
-          context: ./trixie-cuda12.8-cudnn-devel-uv-py312-torch
-          file: ./trixie-cuda12.8-cudnn-devel-uv-py312-torch/Dockerfile
+          context: ./trixie-slim-miniforge
+          file: ./trixie-slim-miniforge/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

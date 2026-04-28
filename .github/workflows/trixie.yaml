@@ -1,16 +1,16 @@
-name: Build debian:trixie-slim-mf
+name: Build debian:trixie
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'trixie-slim-miniforge/**'
-      - '.github/workflows/debian-trixie-slim-miniforge.yaml'
+      - 'trixie/**'
+      - '.github/workflows/trixie.yaml'
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: debian
+  IMAGE_NAME: debian            # 仓库名统一为 debian
 
 jobs:
   build-and-push:
@@ -40,16 +40,14 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=trixie-slim-mf
-            type=sha,prefix=trixie-slim-mf-
-            type=raw,value=trixie-slim-miniforge
-            type=sha,prefix=trixie-slim-miniforge-
+            type=raw,value=trixie               # 语义标签
+            type=sha,prefix=trixie-             # SHA 标签，例如 trixie-abc1234
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
-          context: ./trixie-slim-miniforge
-          file: ./trixie-slim-miniforge/Dockerfile
+          context: ./trixie
+          file: ./trixie/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
