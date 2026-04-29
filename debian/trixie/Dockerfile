@@ -1,16 +1,18 @@
-# /trixie-slim/Dockerfile
-FROM debian:trixie-slim
+# /debian/trixie/Dockerfile
+FROM debian:trixie
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 仅安装维持云平台连接的"必要工具"
+# 安装常用开发工具全家桶 + SSH 服务
 RUN apt-get update && apt-get install -y \
       openssh-server \
       locales \
       tzdata \
       wget \
       curl \
-      ca-certificates \
+      git \
+      vim \
+      build-essential \
       && rm -rf /var/lib/apt/lists/*
 
 # 配置 SSH (供云平台直连)

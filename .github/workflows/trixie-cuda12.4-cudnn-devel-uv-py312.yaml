@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'trixie-cuda12.4-cudnn-devel-uv-py312/**'
+      - 'debian/trixie-cuda12.4-cudnn-devel-uv-py312/**'
       - '.github/workflows/trixie-cuda12.4-cudnn-devel-uv-py312.yaml'
   workflow_dispatch:
 
@@ -46,8 +46,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./trixie-cuda12.4-cudnn-devel-uv-py312
-          file: ./trixie-cuda12.4-cudnn-devel-uv-py312/Dockerfile
+          context: ./debian/trixie-cuda12.4-cudnn-devel-uv-py312
+          file: ./debian/trixie-cuda12.4-cudnn-devel-uv-py312/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
